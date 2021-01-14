@@ -107,6 +107,13 @@ int main()
          	
 			 }
 		 }
+		 
+		 if (strcmp(orden,"dir")==0) {
+		 	switch(Imprimir(directorio,&ext_blq_inodos,datosfich,argumento1))
+		 	
+		 	case 0:
+		 		printf("ERROR: el fichero %s no encontrado\n",argumento1);
+		 }
          /*
          // Escritura de metadatos en comandos rename, remove, copy     
          Grabarinodosydirectorio(&*directorio,&ext_blq_inodos,fent);
@@ -184,7 +191,7 @@ void Directorio(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos){
 	int i,j;
 	
 	for(i=1;MAX_FICHEROS;i++){
-		if((directorio+i)->dir_inodo!=NULL_INODO){
+		if((directorio+i)->dir_inodo!=0){
 			printf("%s\ttamaño: %d\tinodo: %d\tbloques:",(directorio+i)->dir_nfich, inodos->blq_inodos[(directorio+i)->dir_inodo].size_fichero, (directorio+i)->dir_inodo);
 			for(j=0; inodos ->blq_inodos[(directorio+i)->dir_inodo].i_nbloque[j]!=NULL_INODO;j++){
 				
@@ -225,6 +232,44 @@ int Renombrar(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, char *nombrea
 	
 	
 }
+
+int Imprimir(EXT_ENTRADA_DIR *directorio, EXT_BLQ_INODOS *inodos, EXT_DATOS *memdatos, char *nombre){
+	
+	short unsigned int comprobar=0;
+	short unsigned int wardI;
+	int i,j;
+	
+	for( i=1; ((directorio+i)->dir_inodo)!=NULL_INODO;i++){
+		
+		if((strcmp(nombre,(directorio+i)->dir_nfich)==0)){
+			
+			comprobar++;
+			wardI=i;
+			continue;
+		
+		}	
+}
+
+	if(comprobar){
+		for( i=0; inodos->blq_inodos[(directorio+wardI)->dir_inodo].i_nbloque[i]!=NULL_INODO;i++){
+	/*		unsigned char var[SIZE_BLOQUE];
+			memcpy(var,memdatos[inodos->blq_inodos[(directorio+wardI)->dir_inodo].i_nbloque[i]].dato, SIZE_BLOQUE);	
+			var[SIZE_BLOQUE]='\0';
+			printf("%s",var);*/
+			for ( j = 0; j < SIZE_BLOQUE; j++){
+      			printf("%c", memdatos[inodos->blq_inodos[(directorio+wardI)->dir_inodo].i_nbloque[i]-4].dato[j]);
+     		}
+		}
+		printf("\n");
+	}
+	return comprobar;
+}
+
+
+
+
+
+
 
 int ComprobarComando( char *strcomando, char *orden, char *argumento1, char *argumento2){
 
@@ -281,6 +326,8 @@ int ComprobarComando( char *strcomando, char *orden, char *argumento1, char *arg
 			return 0;
 		}else if(strcmp(orden,"rename")==0){
 			return !(strlen(argumento1)>0 && strlen(argumento2)>0);
+		}else if(strcmp(orden,"imprimir")==0){
+			return !(strlen(argumento1)>0);
 		}
 
 
